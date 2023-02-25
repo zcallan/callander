@@ -1,20 +1,21 @@
-use crate::{models::friend_model::Friend, repository::mongodb_repo::MongoRepo};
-use mongodb::bson::oid::ObjectId;
+use mongodb::{bson::oid::ObjectId, Client};
 
 use actix_web::{
-    post, get, put,
-    web::{Data, Json, Path},
+    get, post,
+    web::{self, Data, Json, Path, ServiceConfig},
     HttpResponse,
 };
 
 #[post("/friends")]
-pub async fn create_friend(db: Data<MongoRepo>, new_friend: Json<Friend>) -> HttpResponse {
+pub async fn create(db: web::Data<Client>, new_friend: Json<Friend>) -> HttpResponse {
     let data = Friend {
         id: None,
         first_name: new_friend.first_name.to_owned(),
         last_name: new_friend.last_name.to_owned(),
     };
-    let friend_detail = db.create_friend(data).await;
+
+    let friend_detail = friend::repository::create(db, data).await;
+
     match friend_detail {
         Ok(friend) => HttpResponse::Ok().json(friend),
         Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
@@ -22,7 +23,11 @@ pub async fn create_friend(db: Data<MongoRepo>, new_friend: Json<Friend>) -> Htt
 }
 
 #[post("/friends/{id}")]
-pub async fn update_friend(db: Data<MongoRepo>, path: Path<String>, updated_friend: Json<Friend>) -> HttpResponse {
+pub async fn update(
+    db: Data<MongoRepo>,
+    path: Path<String>,
+    updated_friend: Json<Friend>,
+) -> HttpResponse {
     let id = path.into_inner();
     if id.is_empty() {
         return HttpResponse::BadRequest().body("invalid ID");
@@ -33,7 +38,9 @@ pub async fn update_friend(db: Data<MongoRepo>, path: Path<String>, updated_frie
         first_name: updated_friend.first_name.to_owned(),
         last_name: updated_friend.last_name.to_owned(),
     };
+
     let update_result = db.update_friend(&id, data).await;
+
     match update_result {
         Ok(update) => {
             if update.matched_count == 1 {
@@ -51,7 +58,7 @@ pub async fn update_friend(db: Data<MongoRepo>, path: Path<String>, updated_frie
 }
 
 #[get("/friends/{id}")]
-pub async fn get_friend(db: Data<MongoRepo>, path: Path<String>) -> HttpResponse {
+pub async fn find_one(db: Data<MongoRepo>, path: Path<String>) -> HttpResponse {
     let id = path.into_inner();
     if id.is_empty() {
         return HttpResponse::BadRequest().body("invalid ID");
@@ -64,10 +71,18 @@ pub async fn get_friend(db: Data<MongoRepo>, path: Path<String>) -> HttpResponse
 }
 
 #[get("/friends")]
-pub async fn get_all_friends(db: Data<MongoRepo>) -> HttpResponse {
+pub async fn find_all(db: Data<MongoRepo>) -> HttpResponse {
     let friends = db.get_all_friends().await;
     match friends {
         Ok(friends) => HttpResponse::Ok().json(friends),
         Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
     }
+}
+
+pub fn init_routes(config: &mut ServiceConfig) {
+    config.service(find_all);
+    config.service(find_one);
+    config.service(create);
+    config.service(update);
+    // config.service(delete);
 }
