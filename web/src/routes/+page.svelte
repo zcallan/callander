@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { CreateFriendDto, Friend } from '../types/friend.types';
+	import type { NewFriend, Friend } from '../types/generated';
 
 	let friends: Friend[] = [];
 
@@ -9,7 +9,7 @@
 		friends = await res.json();
 	}
 
-	async function createFriend(data: CreateFriendDto) {
+	async function createFriend(data: NewFriend) {
 		try {
 			await fetch(`http://localhost:8080/friends`, {
 				method: 'POST',

@@ -1,0 +1,3 @@
+ALTER TABLE friends
+ALTER COLUMN id TYPE INTEGER
+USING id::integer
