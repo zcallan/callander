@@ -238,6 +238,18 @@
     svelte-hmr "^0.15.1"
     vitefu "^0.2.4"
 
+"@tanstack/query-core@4.24.10":
+  version "4.24.10"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-4.24.10.tgz#758e1f5b2d7faf7316d299facd272a9f64c26299"
+  integrity sha512-2QywqXEAGBIUoTdgn1lAB4/C8QEqwXHj2jrCLeYTk2xVGtLiPEUD8jcMoeB2noclbiW2mMt4+Fq7fZStuz3wAQ==
+
+"@tanstack/svelte-query@^4.20.0":
+  version "4.24.10"
+  resolved "https://registry.yarnpkg.com/@tanstack/svelte-query/-/svelte-query-4.24.10.tgz#ea0a6d167c9297453d801e265388a274d31f0916"
+  integrity sha512-KwwKzMhxo0EzG7ODPNhjH1uViOR49N4WKa75UGW8PzdJ8TBysy79wkDrP5Ijf32NhI8axfzDALdtv/2jMWa+iQ==
+  dependencies:
+    "@tanstack/query-core" "4.24.10"
+
 "@types/cookie@^0.5.1":
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/@types/cookie/-/cookie-0.5.1.tgz#b29aa1f91a59f35e29ff8f7cb24faf1a3a750554"

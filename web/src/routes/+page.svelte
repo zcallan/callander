@@ -1,32 +1,48 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import type { NewFriend, Friend } from '../types/generated';
+	import { createQuery, createMutation } from '@tanstack/svelte-query';
+	import { getFriends, createFriend } from '../api/friends';
+	import type { LayoutData } from './$types';
 
-	let friends: Friend[] = [];
+	export let data: LayoutData;
 
-	async function getFriends() {
-		const res = await fetch(`http://localhost:8080/friends`);
-		friends = await res.json();
-	}
+	let form: HTMLFormElement;
 
-	async function createFriend(data: NewFriend) {
-		try {
-			await fetch(`http://localhost:8080/friends`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(data)
-			});
+	// This data is cached by prefetchQuery in +page.ts so no fetch actually happens here
+	const friendsQuery = createQuery<Friend[], Error>({
+		queryKey: ['friends'],
+		queryFn: getFriends
+	});
 
-			getFriends();
-		} catch (error) {
-			console.error(error);
+	const createFriendMutation = createMutation<Friend, Error, NewFriend>(createFriend, {
+		onMutate: async (newFriend: NewFriend) => {
+			await data.queryClient.cancelQueries(['friends']);
+
+			// Snapshot the previous value
+			const previousFriends = data.queryClient.getQueryData<Friend[]>(['friends']);
+
+			// Optimistically update to the new value
+			if (previousFriends) {
+				data.queryClient.setQueryData<Friend[]>(
+					['friends'],
+					[...previousFriends, { id: Math.random().toString(), ...newFriend }]
+				);
+			}
+
+			return { previousFriends };
+		},
+		onError: (err: Error, variables: NewFriend, context: any) => {
+			if (context?.previousFriends) {
+				data.queryClient.setQueryData<Friend[]>(['friends'], context.previousFriends);
+			}
+		},
+		onSuccess: () => {
+			form.reset();
+		},
+		// Always refetch after error or success:
+		onSettled: () => {
+			data.queryClient.invalidateQueries(['friends']);
 		}
-	}
-
-	onMount(() => {
-		getFriends();
 	});
 
 	function handleSubmit(event: any) {
@@ -38,7 +54,13 @@
 			data[key] = value;
 		}
 
-		createFriend(data);
+		const newFriend: NewFriend = {
+			first_name: data.first_name,
+			last_name: data.last_name,
+			date_of_birth: data.date_of_birth
+		};
+
+		$createFriendMutation.mutate(newFriend);
 	}
 </script>
 
@@ -49,14 +71,19 @@
 
 <section>
 	<h2>Friends</h2>
-	{#each friends as friend}
-		<div>
-			{friend.first_name}
-			{friend.last_name}
-		</div>
-	{/each}
+	{#if $friendsQuery.isLoading}
+		<p>Loading...</p>
+	{:else if $friendsQuery.isError}
+		<p>Error: {$friendsQuery.error.message}</p>
+	{:else if $friendsQuery.isSuccess}
+		{#each $friendsQuery.data as friend}
+			<p>{friend.first_name} {friend.last_name}</p>
+		{:else}
+			<p>No friends</p>
+		{/each}
+	{/if}
 
-	<form on:submit|preventDefault={handleSubmit}>
+	<form on:submit|preventDefault={handleSubmit} bind:this={form}>
 		<label>
 			First name
 			<input type="text" name="first_name" required />
@@ -67,9 +94,18 @@
 			<input type="text" name="last_name" required />
 		</label>
 
-		<button type="submit">Submit</button>
+		{#if $createFriendMutation.isError}
+			<p>Error: {$createFriendMutation.error.message}</p>
+		{/if}
+
+		<button type="submit" disabled={$createFriendMutation.isLoading}>
+			{$createFriendMutation.isLoading ? 'Loading...' : 'Submit'}
+		</button>
 	</form>
 </section>
 
 <style>
+	label {
+		display: block;
+	}
 </style>
