@@ -24,7 +24,7 @@ async fn main() -> std::io::Result<()> {
 
     let server = HttpServer::new(move || {
         App::new()
-            .wrap(Logger::new("%a %{User-Agent}i"))
+            .wrap(Logger::default())
             .wrap(
                 Cors::default()
                     .allowed_origin("http://127.0.0.1:5173")

@@ -4,6 +4,7 @@
 	import { getFriends, createFriend } from '../api/friends';
 	import type { LayoutData } from './$types';
 	import { createPost, getPosts } from '../api/posts';
+	import Editor from '../components/Editor.svelte';
 
 	export let data: LayoutData;
 
@@ -144,40 +145,28 @@
 		<p>Error: {$postsQuery.error.message}</p>
 	{:else if $postsQuery.isSuccess}
 		{#each $postsQuery.data as post}
-			<p>{post.title}</p>
+			<a href="/posts/{post.id}">{post.title} ({post.id})</a>
 		{:else}
 			<p>No posts</p>
 		{/each}
 	{/if}
 
-	<form on:submit|preventDefault={handleSubmitCreatePost} bind:this={createPostForm}>
-		<label>
-			Title
-			<input type="text" name="title" required />
-		</label>
+	<br />
 
-		<label>
-			Body
-			<textarea name="body" required />
-		</label>
-
-		<label>
-			For Date
-			<input type="text" name="for_date" required placeholder="YYYY-MM-DD" />
-		</label>
-
-		{#if $createPostMutation.isError}
-			<p>Error: {$createPostMutation.error.message}</p>
-		{/if}
-
-		<button type="submit" disabled={$createPostMutation.isLoading}>
-			{$createPostMutation.isLoading ? 'Loading...' : 'Submit'}
-		</button>
-	</form>
+	<a href="/posts/new">Create Post</a>
 </section>
 
 <style>
 	label {
 		display: block;
+	}
+
+	a {
+		display: block;
+		padding: 5px 0;
+	}
+
+	section {
+		padding: 24px 32px;
 	}
 </style>

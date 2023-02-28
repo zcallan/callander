@@ -7,6 +7,13 @@ export const getPosts = async () => {
 	return data;
 };
 
+export const getPostById = async (id: string) => {
+	const res = await fetch(`http://localhost:8080/posts/${id}`);
+	const data = await res.json();
+
+	return data;
+};
+
 export const createPost = async (post: NewPost) => {
 	const res = await fetch('http://localhost:8080/posts', {
 		method: 'POST',
