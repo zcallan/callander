@@ -8,6 +8,7 @@ use dotenv::dotenv;
 mod db;
 mod error_handler;
 mod friends;
+mod posts;
 mod schema;
 mod users;
 
@@ -34,6 +35,7 @@ async fn main() -> std::io::Result<()> {
             )
             .configure(users::routes::init_routes)
             .configure(friends::routes::init_routes)
+            .configure(posts::routes::init_routes)
     })
     .bind(("127.0.0.1", 8080))?
     .run()

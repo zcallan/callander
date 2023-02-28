@@ -1,17 +1,24 @@
 <script lang="ts">
-	import type { NewFriend, Friend } from '../types/generated';
+	import type { NewFriend, Friend, Post, NewPost } from '../types/generated';
 	import { createQuery, createMutation } from '@tanstack/svelte-query';
 	import { getFriends, createFriend } from '../api/friends';
 	import type { LayoutData } from './$types';
+	import { createPost, getPosts } from '../api/posts';
 
 	export let data: LayoutData;
 
-	let form: HTMLFormElement;
+	let createFriendForm: HTMLFormElement;
+	let createPostForm: HTMLFormElement;
 
 	// This data is cached by prefetchQuery in +page.ts so no fetch actually happens here
 	const friendsQuery = createQuery<Friend[], Error>({
 		queryKey: ['friends'],
 		queryFn: getFriends
+	});
+
+	const postsQuery = createQuery<Post[], Error>({
+		queryKey: ['posts'],
+		queryFn: getPosts
 	});
 
 	const createFriendMutation = createMutation<Friend, Error, NewFriend>(createFriend, {
@@ -37,7 +44,7 @@
 			}
 		},
 		onSuccess: () => {
-			form.reset();
+			createFriendForm.reset();
 		},
 		// Always refetch after error or success:
 		onSettled: () => {
@@ -45,14 +52,27 @@
 		}
 	});
 
-	function handleSubmit(event: any) {
-		const formData = new FormData(event.target);
+	const createPostMutation = createMutation<Post, Error, NewPost>(createPost, {
+		onSuccess: () => {
+			createPostForm.reset();
+			$postsQuery.refetch();
+		}
+	});
+
+	const serializeForm = (form: HTMLFormElement) => {
+		const formData = new FormData(form);
 		const data: any = {};
 
 		for (let field of formData) {
 			const [key, value] = field;
 			data[key] = value;
 		}
+
+		return data;
+	};
+
+	function handleSubmitCreateFriend(event: any) {
+		const data = serializeForm(event.target);
 
 		const newFriend: NewFriend = {
 			first_name: data.first_name,
@@ -61,6 +81,18 @@
 		};
 
 		$createFriendMutation.mutate(newFriend);
+	}
+
+	function handleSubmitCreatePost(event: any) {
+		const data = serializeForm(event.target);
+
+		const newPost: NewPost = {
+			title: data.title,
+			body: data.body,
+			for_date: data.for_date
+		};
+
+		$createPostMutation.mutate(newPost);
 	}
 </script>
 
@@ -83,7 +115,7 @@
 		{/each}
 	{/if}
 
-	<form on:submit|preventDefault={handleSubmit} bind:this={form}>
+	<form on:submit|preventDefault={handleSubmitCreateFriend} bind:this={createFriendForm}>
 		<label>
 			First name
 			<input type="text" name="first_name" required />
@@ -98,8 +130,48 @@
 			<p>Error: {$createFriendMutation.error.message}</p>
 		{/if}
 
-		<button type="submit" disabled={$createFriendMutation.isLoading}>
-			{$createFriendMutation.isLoading ? 'Loading...' : 'Submit'}
+		<button type="submit" disabled={$createFriendMutation.isLoading}> Submit </button>
+	</form>
+</section>
+
+<hr />
+
+<section>
+	<h2>Posts</h2>
+	{#if $postsQuery.isLoading}
+		<p>Loading...</p>
+	{:else if $postsQuery.isError}
+		<p>Error: {$postsQuery.error.message}</p>
+	{:else if $postsQuery.isSuccess}
+		{#each $postsQuery.data as post}
+			<p>{post.title}</p>
+		{:else}
+			<p>No posts</p>
+		{/each}
+	{/if}
+
+	<form on:submit|preventDefault={handleSubmitCreatePost} bind:this={createPostForm}>
+		<label>
+			Title
+			<input type="text" name="title" required />
+		</label>
+
+		<label>
+			Body
+			<textarea name="body" required />
+		</label>
+
+		<label>
+			For Date
+			<input type="text" name="for_date" required placeholder="YYYY-MM-DD" />
+		</label>
+
+		{#if $createPostMutation.isError}
+			<p>Error: {$createPostMutation.error.message}</p>
+		{/if}
+
+		<button type="submit" disabled={$createPostMutation.isLoading}>
+			{$createPostMutation.isLoading ? 'Loading...' : 'Submit'}
 		</button>
 	</form>
 </section>

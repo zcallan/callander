@@ -10,6 +10,17 @@ diesel::table! {
 }
 
 diesel::table! {
+    posts (id) {
+        id -> Varchar,
+        title -> Varchar,
+        body -> Text,
+        for_date -> Date,
+        created_at -> Timestamp,
+        updated_at -> Timestamp,
+    }
+}
+
+diesel::table! {
     users (id) {
         id -> Varchar,
         first_name -> Varchar,
@@ -20,5 +31,6 @@ diesel::table! {
 
 diesel::allow_tables_to_appear_in_same_query!(
     friends,
+    posts,
     users,
 );
