@@ -14,6 +14,7 @@ mod users;
 
 use actix_cors::Cors;
 use actix_web::{http, middleware::Logger, App, HttpServer};
+use log::info;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -21,7 +22,7 @@ async fn main() -> std::io::Result<()> {
     db::init();
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
-    HttpServer::new(move || {
+    let server = HttpServer::new(move || {
         App::new()
             .wrap(Logger::new("%a %{User-Agent}i"))
             .wrap(
@@ -38,6 +39,9 @@ async fn main() -> std::io::Result<()> {
             .configure(posts::routes::init_routes)
     })
     .bind(("127.0.0.1", 8080))?
-    .run()
-    .await
+    .run();
+
+    info!("Server started on port 8080");
+
+    server.await
 }
