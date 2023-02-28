@@ -1,0 +1,11 @@
+version: "2"
+name: callander
+services:
+  postgres:
+    image: postgis/postgis:11-3.0
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: backend
+    ports:
+      - "5400:5432"
