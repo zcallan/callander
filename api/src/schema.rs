@@ -6,6 +6,8 @@ diesel::table! {
         first_name -> Varchar,
         last_name -> Varchar,
         date_of_birth -> Nullable<Date>,
+        created_at -> Timestamp,
+        updated_at -> Timestamp,
     }
 }
 

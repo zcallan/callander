@@ -68,6 +68,20 @@ pub async fn find_all() -> Result<HttpResponse, Error> {
     Ok(HttpResponse::Ok().json(friends))
 }
 
+#[get("/friends/{id}")]
+pub async fn find_one(path: web::Path<String>) -> Result<HttpResponse, Error> {
+    let id = path.into_inner();
+
+    let friend: Friend = web::block(move || {
+        let mut conn = db::connection().expect("Error");
+        actions::find_friend_by_id(&mut conn, id)
+    })
+    .await?
+    .map_err(actix_web::error::ErrorInternalServerError)?;
+
+    Ok(HttpResponse::Ok().json(friend))
+}
+
 #[post("/friends")]
 pub async fn create(new_friend: Json<NewFriend>) -> Result<HttpResponse, Error> {
     let friend = web::block(move || {
@@ -82,7 +96,7 @@ pub async fn create(new_friend: Json<NewFriend>) -> Result<HttpResponse, Error> 
 
 pub fn init_routes(config: &mut ServiceConfig) {
     config.service(find_all);
-    // config.service(find_one);
+    config.service(find_one);
     config.service(create);
     // config.service(update);
     // config.service(delete);

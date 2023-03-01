@@ -1,4 +1,4 @@
-use chrono::NaiveDate;
+use chrono::{NaiveDate, NaiveDateTime};
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 
@@ -12,6 +12,10 @@ pub struct Friend {
     #[ts(type = "string")]
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub date_of_birth: Option<NaiveDate>,
+    #[ts(type = "string")]
+    pub created_at: NaiveDateTime,
+    #[ts(type = "string")]
+    pub updated_at: NaiveDateTime,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TS)]

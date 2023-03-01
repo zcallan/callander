@@ -1,10 +1,10 @@
 <script lang="ts">
 	import './styles.css';
-	import Header from './Header.svelte';
-	import { QueryClientProvider } from '@tanstack/svelte-query'
-  import type { LayoutData } from './$types'
+	import Header from '../components/Header.svelte';
+	import { QueryClientProvider } from '@tanstack/svelte-query';
+	import type { LayoutData } from './$types';
 
-  export let data: LayoutData
+	export let data: LayoutData;
 </script>
 
 <QueryClientProvider client={data.queryClient}>

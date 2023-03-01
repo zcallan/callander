@@ -7,8 +7,14 @@ use crate::{posts::models, schema::posts};
 
 type DbError = Box<dyn std::error::Error + Send + Sync>;
 
-pub fn find_all_posts(conn: &mut PgConnection) -> Result<Vec<Post>, DbError> {
+pub fn find_all_posts(
+    conn: &mut PgConnection,
+    limit: i64,
+    offset: i64,
+) -> Result<Vec<Post>, DbError> {
     let all_posts = posts::table
+        .limit(limit)
+        .offset(offset)
         .load::<models::Post>(conn)
         .expect("Error loading posts");
 
@@ -16,12 +22,9 @@ pub fn find_all_posts(conn: &mut PgConnection) -> Result<Vec<Post>, DbError> {
 }
 
 pub fn find_post_by_id(conn: &mut PgConnection, id: String) -> Result<Post, DbError> {
-    info!("id: {id}");
-
     let post = posts::table
         .filter(posts::id.eq(id))
         .first(conn)
-        // .load::<Post>(conn)
         .expect("Error loading posts");
 
     Ok(post)

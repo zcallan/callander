@@ -34,6 +34,9 @@
 </svelte:head>
 
 <section>
+	<div>
+		<a class="button" href="/"> Back </a>
+	</div>
 	<h1>Create Post</h1>
 	<form on:submit|preventDefault={handleSubmitCreatePost}>
 		<label>
