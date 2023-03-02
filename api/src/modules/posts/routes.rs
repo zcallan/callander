@@ -1,28 +1,23 @@
 use actix_web::{
     get, post,
-    web::{self, Data, Json, Path, ServiceConfig},
+    web::{self, Json, ServiceConfig},
     Error, HttpResponse,
 };
-use serde::Deserialize;
 
-use crate::db;
 use crate::posts::actions;
-use crate::posts::models::{NewPost, Post};
-
-#[derive(Deserialize)]
-pub struct FindAllQuery {
-    limit: Option<i64>,
-    offset: Option<i64>,
-}
+use crate::posts::models::{NewPost, Post, PostsFindAllQuery};
+use crate::{db, utils::pagination::Paginated};
 
 #[get("/posts")]
-pub async fn find_all(info: web::Query<FindAllQuery>) -> Result<HttpResponse, Error> {
-    let limit = info.limit.unwrap_or(10);
-    let offset = info.offset.unwrap_or(0);
+pub async fn find_all(info: web::Query<PostsFindAllQuery>) -> Result<HttpResponse, Error> {
+    let options = PostsFindAllQuery {
+        page: info.page,
+        per_page: info.per_page,
+    };
 
-    let posts: Vec<Post> = web::block(move || {
+    let posts: Paginated<Vec<Post>> = web::block(move || {
         let mut conn = db::connection().expect("Error");
-        actions::find_all_posts(&mut conn, limit, offset)
+        actions::find_all_posts(&mut conn, &options)
     })
     .await?
     .map_err(actix_web::error::ErrorInternalServerError)?;

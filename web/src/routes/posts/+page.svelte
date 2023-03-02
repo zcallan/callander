@@ -1,45 +1,48 @@
 <script lang="ts">
-	import type { Post } from '../../types/generated';
-	import { createQuery } from '@tanstack/svelte-query';
-	import { getPosts } from '../../api/posts';
+  import { createQuery } from '@tanstack/svelte-query';
+  import type { Paginated, Post } from '$lib/types/generated';
+  import { getPosts } from '$lib/api/posts';
 
-	// This data is cached by prefetchQuery in +page.ts so no fetch actually happens here
-	const postsQuery = createQuery<Post[], Error>({
-		queryKey: ['posts'],
-		queryFn: getPosts
-	});
+  let page = 1;
+  let perPage = 10;
+
+  // This data is cached by prefetchQuery in +page.ts so no fetch actually happens here
+  const postsQuery = createQuery<Paginated<Post[]>, Error>({
+    queryKey: ['posts', { page, per_page: perPage }],
+    queryFn: () => getPosts({ page, per_page: perPage }),
+  });
 </script>
 
 <svelte:head>
-	<title>Callander</title>
-	<meta name="description" content="Lorem ipsum" />
+  <title>Callander</title>
+  <meta name="description" content="Lorem ipsum" />
 </svelte:head>
 
 <section>
-	<div>
-		<a class="button" href="/"> Back </a>
-	</div>
-	<h2>Posts</h2>
-	{#if $postsQuery.isLoading}
-		<p>Loading...</p>
-	{:else if $postsQuery.isError}
-		<p>Error: {$postsQuery.error.message}</p>
-	{:else if $postsQuery.isSuccess}
-		{#each $postsQuery.data as post}
-			<a href="/posts/{post.id}">{post.title}</a>
-		{:else}
-			<p>No posts</p>
-		{/each}
-	{/if}
+  <div>
+    <a class="button" href="/"> Back </a>
+  </div>
+  <h2>Posts</h2>
+  {#if $postsQuery.isLoading}
+    <p>Loading...</p>
+  {:else if $postsQuery.isError}
+    <p>Error: {$postsQuery.error.message}</p>
+  {:else if $postsQuery.isSuccess}
+    {#each $postsQuery.data.items as post}
+      <a href="/posts/{post.id}">{post.title}</a>
+    {:else}
+      <p>No posts</p>
+    {/each}
+  {/if}
 
-	<br />
+  <br />
 
-	<a href="/posts/new">Create Post</a>
+  <a href="/posts/new">Create Post</a>
 </section>
 
 <style>
-	a {
-		display: block;
-		padding: 5px 0;
-	}
+  a {
+    display: block;
+    padding: 5px 0;
+  }
 </style>

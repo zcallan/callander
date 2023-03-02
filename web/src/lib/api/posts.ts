@@ -1,12 +1,9 @@
-import type { NewPost } from '../types/generated';
+import type { NewPost, PostsFindAllQuery } from '$lib/types/generated';
 
-type GetPostParams = {
-  limit?: number;
-};
-
-export const getPosts = async (params?: any) => {
+export const getPosts = async (params: PostsFindAllQuery) => {
   const urlParams = new URLSearchParams({
-    limit: params?.limit || 10,
+    page: String(params.page),
+    per_page: String(params?.per_page ?? 10),
   });
 
   const res = await fetch(`http://localhost:8080/posts?${urlParams}`);

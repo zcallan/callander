@@ -1,9 +1,9 @@
 <script lang="ts">
 	import dayjs from 'dayjs';
-	import type { Friend, NewFriend } from '../../../types/generated';
+	import type { Friend, NewFriend } from '$lib/types/generated';
 	import { createMutation } from '@tanstack/svelte-query';
-	import { createFriend } from '../../../api/friends';
-	import { serializeForm } from '$lib/serializeForm';
+	import { createFriend } from '$lib/api/friends';
+	import { serializeForm } from '$lib/utils/serializeForm';
 	import { goto } from '$app/navigation';
 
 	const createFriendMutation = createMutation<Friend, Error, NewFriend>(createFriend, {

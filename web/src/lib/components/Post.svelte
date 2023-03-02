@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createQuery } from '@tanstack/svelte-query';
-	import { getPostById } from '../api/posts';
-	import type { Post } from '../types/generated';
+	import { getPostById } from '$lib/api/posts';
+	import type { Post } from '$lib/types/generated';
 
 	export let postId: string;
 

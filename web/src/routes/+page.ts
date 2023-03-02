@@ -1,9 +1,12 @@
-import { getFriends } from '../api/friends';
-import { getPosts } from '../api/posts';
+import { getFriends } from '$lib/api/friends';
+import { getPosts } from '$lib/api/posts';
+import type { PostsFindAllQuery } from '../../../api/bindings/PostsFindAllQuery';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ parent }) => {
   const { queryClient } = await parent();
+
+  const postsOptions: PostsFindAllQuery = { page: 1, per_page: 10 };
 
   await Promise.allSettled([
     queryClient.prefetchQuery({
@@ -11,8 +14,8 @@ export const load: PageLoad = async ({ parent }) => {
       queryFn: getFriends,
     }),
     queryClient.prefetchQuery({
-      queryKey: ['posts', 2],
-      queryFn: () => getPosts({ limit: 2 }),
+      queryKey: ['posts', postsOptions],
+      queryFn: () => getPosts(postsOptions),
     }),
   ]);
 };

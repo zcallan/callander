@@ -26,3 +26,14 @@ pub struct NewPost {
     #[ts(type = "string")]
     pub for_date: NaiveDate,
 }
+
+#[derive(Deserialize, TS)]
+#[ts(export)]
+pub struct PostsFindAllQuery {
+    #[ts(type = "number")]
+    pub page: i64,
+
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ts(type = "number")]
+    pub per_page: Option<i64>,
+}

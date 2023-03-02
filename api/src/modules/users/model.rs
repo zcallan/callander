@@ -1,5 +1,4 @@
-use chrono::{NaiveDate, NaiveDateTime};
-use diesel::{data_types::PgDate, sql_types::Date};
+use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 

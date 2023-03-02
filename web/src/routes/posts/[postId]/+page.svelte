@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Post from '../../../components/Post.svelte';
-	import type { PageData } from './$types';
+  import Post from '$lib/components/Post.svelte';
+  import type { PageData } from './$types';
 
-	export let data: PageData;
+  export let data: PageData;
 
-	const postId: string = data.postId;
+  const postId: string = data.postId;
 </script>
 
 <Post {postId} />

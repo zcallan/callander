@@ -1,6 +1,6 @@
 import { createQuery } from '@tanstack/svelte-query';
 import { getFriends } from '../api/friends';
-import type { Friend } from '../types/generated';
+import type { Friend } from '$lib/types/generated';
 
 export const friendsQuery = (params: any) => {
   console.log('friendsQuery', params);

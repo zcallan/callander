@@ -7,14 +7,14 @@ use dotenv::dotenv;
 
 mod db;
 mod error_handler;
-mod friends;
-mod posts;
+mod modules;
 mod schema;
-mod users;
+mod utils;
 
 use actix_cors::Cors;
 use actix_web::{http, middleware::Logger, App, HttpServer};
 use log::info;
+use modules::{friends, posts, users};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {

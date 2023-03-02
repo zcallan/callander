@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Friend from '../../../components/Friend.svelte';
-	import type { PageData } from './$types';
+  import Friend from '$lib/components/Friend.svelte';
+  import type { PageData } from './$types';
 
-	export let data: PageData;
+  export let data: PageData;
 
-	const friendId: string = data.friendId;
+  const friendId: string = data.friendId;
 </script>
 
 <Friend {friendId} />

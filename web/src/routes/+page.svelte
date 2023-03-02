@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type { Friend, Post } from '../types/generated';
   import { createQuery } from '@tanstack/svelte-query';
-  import { getFriends } from '../api/friends';
-  import { getPosts } from '../api/posts';
-  import postsQuery from '../queries/postsQuery';
+  import type { Friend, Post } from '$lib/types/generated';
+  import { getFriends } from '$lib/api/friends';
+  import { getPosts } from '$lib/api/posts';
+  import postsQuery from '$lib/queries/postsQuery';
 
   // This data is cached by prefetchQuery in +page.ts so no fetch actually happens here
   const friendsQuery = createQuery<Friend[], Error>({
@@ -11,7 +11,7 @@
     queryFn: getFriends,
   });
 
-  const posts = postsQuery({ limit: 2 });
+  const posts = postsQuery({ page: 1, per_page: 10 });
 </script>
 
 <svelte:head>
@@ -53,7 +53,7 @@
   {:else if $posts.isError}
     <p>Error: {$posts.error.message}</p>
   {:else if $posts.isSuccess}
-    {#each $posts.data as post}
+    {#each $posts.data.items as post}
       <a href="/posts/{post.id}">{post.title} ({post.id})</a>
     {:else}
       <p>No posts</p>
