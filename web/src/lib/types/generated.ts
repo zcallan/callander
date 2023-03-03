@@ -7,3 +7,4 @@ export type { NewPost } from '../../../../api/bindings/NewPost';
 export type { PostsFindAllQuery } from '../../../../api/bindings/PostsFindAllQuery';
 export type { Paginated } from '../../../../api/bindings/Paginated';
 export type { UpdateFriend } from '../../../../api/bindings/UpdateFriend';
+export type { MetAtAccuracyEnum } from '../../../../api/bindings/MetAtAccuracyEnum';

@@ -14,7 +14,9 @@
     queryFn: () => getFriendById(friendId),
   });
 
-  let attributes = [
+  let attributes: any[] = [];
+
+  $: attributes = [
     {
       label: 'Date of birth',
       value: $friend.data?.date_of_birth,
@@ -27,9 +29,11 @@
         if (!value) return null;
         const dateOfBirth = dayjs(value);
         const currentYear = dayjs().year();
-        const daysUntilBday = dayjs().diff(dateOfBirth.year(currentYear + 1), 'days');
+        const daysUntilBday = dateOfBirth.year(currentYear).isAfter(dayjs())
+          ? dateOfBirth.year(currentYear).diff(dayjs(), 'days')
+          : dateOfBirth.year(currentYear + 1).diff(dayjs(), 'days');
         const yearsOld = dayjs().diff(dateOfBirth, 'years');
-        return `${yearsOld} (${Math.abs(daysUntilBday)}d until bday)`;
+        return `${yearsOld} (${daysUntilBday}d until bday)`;
       },
     },
     {

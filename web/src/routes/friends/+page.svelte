@@ -33,6 +33,10 @@
 </section>
 
 <style>
+  section {
+    padding: 24px 32px;
+  }
+
   a {
     display: block;
     padding: 5px 0;
