@@ -1,13 +1,8 @@
 <script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query';
-  import type { Friend } from '$lib/types/generated';
-  import { getFriends } from '$lib/api/friends';
+  import { getFriendsQuery } from '$lib/queries/friends';
 
   // This data is cached by prefetchQuery in +page.ts so no fetch actually happens here
-  const friendsQuery = createQuery<Friend[], Error>({
-    queryKey: ['friends'],
-    queryFn: getFriends,
-  });
+  const friendsQuery = getFriendsQuery({ page: 1, per_page: 10 });
 </script>
 
 <svelte:head>

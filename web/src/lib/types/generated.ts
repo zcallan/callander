@@ -6,3 +6,4 @@ export type { Post } from '../../../../api/bindings/Post';
 export type { NewPost } from '../../../../api/bindings/NewPost';
 export type { PostsFindAllQuery } from '../../../../api/bindings/PostsFindAllQuery';
 export type { Paginated } from '../../../../api/bindings/Paginated';
+export type { UpdateFriend } from '../../../../api/bindings/UpdateFriend';

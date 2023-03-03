@@ -1,16 +1,11 @@
 <script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query';
-  import type { Paginated, Post } from '$lib/types/generated';
-  import { getPosts } from '$lib/api/posts';
+  import { getPostsQuery } from '$lib/queries/posts';
 
   let page = 1;
   let perPage = 10;
 
   // This data is cached by prefetchQuery in +page.ts so no fetch actually happens here
-  const postsQuery = createQuery<Paginated<Post[]>, Error>({
-    queryKey: ['posts', { page, per_page: perPage }],
-    queryFn: () => getPosts({ page, per_page: perPage }),
-  });
+  const postsQuery = getPostsQuery({ page, per_page: perPage });
 </script>
 
 <svelte:head>

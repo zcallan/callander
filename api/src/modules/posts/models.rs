@@ -10,10 +10,13 @@ pub struct Post {
     pub id: String,
     pub title: String,
     pub body: String,
+
     #[ts(type = "string")]
     pub for_date: NaiveDate,
+
     #[ts(type = "string")]
     pub created_at: NaiveDateTime,
+
     #[ts(type = "string")]
     pub updated_at: NaiveDateTime,
 }
@@ -23,6 +26,7 @@ pub struct Post {
 pub struct NewPost {
     pub title: String,
     pub body: String,
+
     #[ts(type = "string")]
     pub for_date: NaiveDate,
 }
@@ -33,7 +37,6 @@ pub struct PostsFindAllQuery {
     #[ts(type = "number")]
     pub page: i64,
 
-    #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ts(type = "number")]
     pub per_page: Option<i64>,
 }

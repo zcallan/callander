@@ -3,10 +3,11 @@ use actix_web::{
     web::{self, Json, ServiceConfig},
     Error, HttpResponse,
 };
+use log::info;
 
 use crate::db;
 use crate::friends::actions;
-use crate::friends::models::{Friend, NewFriend};
+use crate::friends::models::{Friend, NewFriend, UpdateFriend};
 
 #[get("/friends")]
 pub async fn find_all() -> Result<HttpResponse, Error> {
@@ -46,10 +47,27 @@ pub async fn create(new_friend: Json<NewFriend>) -> Result<HttpResponse, Error> 
     Ok(HttpResponse::Ok().json(friend))
 }
 
+#[post("/friends/{id}")]
+pub async fn update(
+    path: web::Path<String>,
+    update_friend: Json<UpdateFriend>,
+) -> Result<HttpResponse, Error> {
+    let id = path.into_inner();
+
+    let friend = web::block(move || {
+        let mut conn = db::connection().expect("Error");
+        actions::update_friend(&mut conn, id, &update_friend)
+    })
+    .await?
+    .map_err(actix_web::error::ErrorInternalServerError)?;
+
+    Ok(HttpResponse::Ok().json(friend))
+}
+
 pub fn init_routes(config: &mut ServiceConfig) {
     config.service(find_all);
     config.service(find_one);
     config.service(create);
-    // config.service(update);
+    config.service(update);
     // config.service(delete);
 }

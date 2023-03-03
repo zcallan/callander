@@ -1,9 +1,10 @@
 use diesel::prelude::*;
+use log::info;
 use uuid::Uuid;
 
 use crate::{friends::models, schema::friends};
 
-use super::models::{Friend, NewFriend};
+use super::models::{Friend, NewFriend, UpdateFriend};
 
 type DbError = Box<dyn std::error::Error + Send + Sync>;
 
@@ -24,6 +25,8 @@ pub fn create_friend(conn: &mut PgConnection, new_friend: &NewFriend) -> Result<
         date_of_birth: new_friend.date_of_birth.clone(),
         created_at: chrono::Utc::now().naive_utc(),
         updated_at: chrono::Utc::now().naive_utc(),
+        met_at: new_friend.met_at.clone(),
+        met_at_accuracy: new_friend.met_at_accuracy.clone(),
     };
 
     diesel::insert_into(friends::table)
@@ -31,6 +34,25 @@ pub fn create_friend(conn: &mut PgConnection, new_friend: &NewFriend) -> Result<
         .execute(conn)?;
 
     Ok(new_friend)
+}
+
+pub fn update_friend(
+    conn: &mut PgConnection,
+    id: String,
+    update_friend: &UpdateFriend,
+) -> Result<Friend, DbError> {
+    let updated_friend = diesel::update(friends::table)
+        .set((
+            friends::first_name.eq(update_friend.first_name.clone()),
+            friends::last_name.eq(update_friend.last_name.clone()),
+            friends::date_of_birth.eq(update_friend.date_of_birth.clone()),
+            friends::met_at.eq(update_friend.met_at.clone()),
+            friends::met_at_accuracy.eq(update_friend.met_at_accuracy.clone()),
+        ))
+        .filter(friends::id.eq(id.clone()))
+        .get_result(conn)?;
+
+    Ok(updated_friend)
 }
 
 pub fn find_friend_by_id(conn: &mut PgConnection, id: String) -> Result<Friend, DbError> {
