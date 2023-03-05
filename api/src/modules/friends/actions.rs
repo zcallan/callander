@@ -2,7 +2,10 @@ use diesel::prelude::*;
 use log::info;
 use uuid::Uuid;
 
-use crate::{friends::models, schema::friends};
+use crate::{
+    friends::models,
+    schema::{friends, friends_ideas},
+};
 
 use super::models::{Friend, NewFriend, UpdateFriend};
 
@@ -18,7 +21,7 @@ pub fn find_all_friends(conn: &mut PgConnection) -> Result<Vec<Friend>, DbError>
 }
 
 pub fn create_friend(conn: &mut PgConnection, new_friend: &NewFriend) -> Result<Friend, DbError> {
-    let new_friend = Friend {
+    let friend = Friend {
         id: Uuid::new_v4().to_string(),
         first_name: new_friend.first_name.clone(),
         last_name: new_friend.last_name.clone(),
@@ -30,10 +33,10 @@ pub fn create_friend(conn: &mut PgConnection, new_friend: &NewFriend) -> Result<
     };
 
     diesel::insert_into(friends::table)
-        .values(&new_friend)
+        .values(&friend)
         .execute(conn)?;
 
-    Ok(new_friend)
+    Ok(friend)
 }
 
 pub fn update_friend(

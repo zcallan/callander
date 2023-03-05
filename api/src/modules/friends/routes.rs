@@ -7,7 +7,7 @@ use log::info;
 
 use crate::db;
 use crate::friends::actions;
-use crate::friends::models::{Friend, NewFriend, UpdateFriend};
+use crate::friends::models;
 
 #[get("/friends")]
 pub async fn find_all() -> Result<HttpResponse, Error> {
@@ -25,7 +25,7 @@ pub async fn find_all() -> Result<HttpResponse, Error> {
 pub async fn find_one(path: web::Path<String>) -> Result<HttpResponse, Error> {
     let id = path.into_inner();
 
-    let friend: Friend = web::block(move || {
+    let friend: models::Friend = web::block(move || {
         let mut conn = db::connection().expect("Error");
         actions::find_friend_by_id(&mut conn, id)
     })
@@ -36,7 +36,7 @@ pub async fn find_one(path: web::Path<String>) -> Result<HttpResponse, Error> {
 }
 
 #[post("/friends")]
-pub async fn create(new_friend: Json<NewFriend>) -> Result<HttpResponse, Error> {
+pub async fn create(new_friend: Json<models::NewFriend>) -> Result<HttpResponse, Error> {
     let friend = web::block(move || {
         let mut conn = db::connection().expect("Error");
         actions::create_friend(&mut conn, &new_friend)
@@ -50,7 +50,7 @@ pub async fn create(new_friend: Json<NewFriend>) -> Result<HttpResponse, Error> 
 #[post("/friends/{id}")]
 pub async fn update(
     path: web::Path<String>,
-    update_friend: Json<UpdateFriend>,
+    update_friend: Json<models::UpdateFriend>,
 ) -> Result<HttpResponse, Error> {
     let id = path.into_inner();
 
@@ -69,5 +69,4 @@ pub fn init_routes(config: &mut ServiceConfig) {
     config.service(find_one);
     config.service(create);
     config.service(update);
-    // config.service(delete);
 }

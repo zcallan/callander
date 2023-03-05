@@ -14,7 +14,7 @@ mod utils;
 use actix_cors::Cors;
 use actix_web::{http, middleware::Logger, App, HttpServer};
 use log::info;
-use modules::{friends, posts, users};
+use modules::{friends, friends_ideas, posts, users};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -36,6 +36,7 @@ async fn main() -> std::io::Result<()> {
             )
             .configure(users::routes::init_routes)
             .configure(friends::routes::init_routes)
+            .configure(friends_ideas::routes::init_routes)
             .configure(posts::routes::init_routes)
     })
     .bind(("127.0.0.1", 8080))?

@@ -2,6 +2,10 @@
 
 pub mod sql_types {
     #[derive(diesel::sql_types::SqlType)]
+    #[diesel(postgres_type(name = "friends_ideas_type_enum"))]
+    pub struct FriendsIdeasTypeEnum;
+
+    #[derive(diesel::sql_types::SqlType)]
     #[diesel(postgres_type(name = "met_at_accuracy_enum"))]
     pub struct MetAtAccuracyEnum;
 }
@@ -19,6 +23,20 @@ diesel::table! {
         updated_at -> Timestamp,
         met_at -> Nullable<Date>,
         met_at_accuracy -> Nullable<MetAtAccuracyEnum>,
+    }
+}
+
+diesel::table! {
+    use diesel::sql_types::*;
+    use super::sql_types::FriendsIdeasTypeEnum;
+
+    friends_ideas (id) {
+        id -> Varchar,
+        content -> Text,
+        created_at -> Timestamp,
+        updated_at -> Timestamp,
+        friend_id -> Varchar,
+        idea_type -> FriendsIdeasTypeEnum,
     }
 }
 
@@ -42,8 +60,11 @@ diesel::table! {
     }
 }
 
+diesel::joinable!(friends_ideas -> friends (friend_id));
+
 diesel::allow_tables_to_appear_in_same_query!(
     friends,
+    friends_ideas,
     posts,
     users,
 );

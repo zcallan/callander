@@ -15,6 +15,7 @@ pub enum MetAtAccuracyEnum {
 }
 
 #[derive(Debug, Serialize, Deserialize, Queryable, Insertable, TS)]
+#[diesel(table_name = friends)]
 #[ts(export)]
 pub struct Friend {
     pub id: String,
