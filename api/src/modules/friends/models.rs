@@ -14,7 +14,7 @@ pub enum MetAtAccuracyEnum {
     Year,
 }
 
-#[derive(Debug, Serialize, Deserialize, Queryable, Insertable, TS)]
+#[derive(Debug, Serialize, Deserialize, Queryable, Insertable, TS, Clone)]
 #[diesel(table_name = friends)]
 #[ts(export)]
 pub struct Friend {
@@ -62,4 +62,9 @@ pub struct UpdateFriend {
     #[ts(type = "string")]
     pub met_at: Option<NaiveDate>,
     pub met_at_accuracy: Option<MetAtAccuracyEnum>,
+}
+
+pub struct FriendsFindAllSort {
+    pub sort_by: String,
+    pub sort_dir: String,
 }

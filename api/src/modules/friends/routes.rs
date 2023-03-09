@@ -5,8 +5,6 @@ use actix_web::{
     web::{self, Json, Query, ServiceConfig},
     Error, HttpRequest, HttpResponse,
 };
-use log::info;
-use serde::Deserialize;
 
 use crate::friends::actions;
 use crate::friends::models;
@@ -22,15 +20,13 @@ pub async fn find_all(req: HttpRequest) -> Result<HttpResponse, Error> {
     let sort_by = params.get("sort_by").unwrap_or(default_sort_by);
     let sort_order = params.get("sort_order").unwrap_or(default_sort_order);
 
-    info!("sort_by: {}", sort_by);
-    info!("sort_order: {}", sort_order);
+    let sort = models::FriendsFindAllSort {
+        sort_by: sort_by.to_string(),
+        sort_dir: sort_order.to_string(),
+    };
 
-    let friends = web::block(move || {
-        let mut conn = db::connection().expect("Error");
-        actions::find_all(&mut conn, sort_by.clone(), sort_order.clone())
-    })
-    .await?
-    .map_err(actix_web::error::ErrorInternalServerError)?;
+    let mut conn = db::connection().expect("Error");
+    let friends = actions::find_all(&mut conn, sort).expect("Failed to get friends");
 
     Ok(HttpResponse::Ok().json(friends))
 }

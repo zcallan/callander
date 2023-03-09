@@ -62,9 +62,4 @@ diesel::table! {
 
 diesel::joinable!(friends_ideas -> friends (friend_id));
 
-diesel::allow_tables_to_appear_in_same_query!(
-    friends,
-    friends_ideas,
-    posts,
-    users,
-);
+diesel::allow_tables_to_appear_in_same_query!(friends, friends_ideas, posts, users,);
