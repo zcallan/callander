@@ -5,7 +5,7 @@ import type { Paginated, Post, PostsFindAllQuery } from '$lib/types/generated';
 export const getPostsQuery = (params: PostsFindAllQuery) => {
   return createQuery<Paginated<Post[]>, Error>({
     queryKey: ['posts', params.page],
-    queryFn: () => getPosts({ page: params.page }),
+    queryFn: () => getPosts({ page: params.page, per_page: params.per_page }),
   });
 };
 

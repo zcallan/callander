@@ -18,7 +18,7 @@ pub fn find_all_posts(
     let per_page = options.per_page.unwrap_or(10).min(20);
 
     let query = posts::table
-        .order(posts::created_at.desc())
+        // .order(posts::created_at.desc())
         .paginate(page)
         .per_page(per_page);
 

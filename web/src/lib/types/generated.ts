@@ -8,3 +8,7 @@ export type { PostsFindAllQuery } from '../../../../api/bindings/PostsFindAllQue
 export type { Paginated } from '../../../../api/bindings/Paginated';
 export type { UpdateFriend } from '../../../../api/bindings/UpdateFriend';
 export type { MetAtAccuracyEnum } from '../../../../api/bindings/MetAtAccuracyEnum';
+export type { FriendsIdea } from '../../../../api/bindings/FriendsIdea';
+export type { NewFriendsIdea } from '../../../../api/bindings/NewFriendsIdea';
+export type { UpdateFriendsIdea } from '../../../../api/bindings/UpdateFriendsIdea';
+export type { FriendIdeaTypeEnum } from '../../../../api/bindings/FriendIdeaTypeEnum';

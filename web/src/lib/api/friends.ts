@@ -1,43 +1,54 @@
-import type { NewFriend, UpdateFriend } from '$lib/types/generated';
+import type {
+  Paginated,
+  Friend,
+  NewFriend,
+  NewFriendsIdea,
+  UpdateFriend,
+  UpdateFriendsIdea,
+  FriendsIdea,
+} from '$lib/types/generated';
+import apiCall from '$lib/utils/apiCall';
 
 export const getFriends = async (params: any) => {
-  console.log('getFriends', params);
-
-  const res = await fetch('http://localhost:8080/friends');
-  const data = await res.json();
-
-  return data;
+  return apiCall<Friend[]>('/friends');
 };
 
 export const getFriendById = async (id: string) => {
-  const res = await fetch(`http://localhost:8080/friends/${id}`);
-  const data = await res.json();
-
-  return data;
+  return apiCall<Friend>(`/friends/${id}`);
 };
 
 export const createFriend = async (friend: NewFriend) => {
-  const res = await fetch('http://localhost:8080/friends', {
+  return apiCall<Friend>('/friends', {
     method: 'POST',
     body: JSON.stringify(friend),
-    headers: {
-      'Content-Type': 'application/json',
-    },
   });
-  const data = await res.json();
-
-  return data;
 };
 
 export const updateFriend = async (id: string, friend: UpdateFriend) => {
-  const res = await fetch(`http://localhost:8080/friends/${id}`, {
+  return apiCall<Friend>(`/friends/${id}`, {
     method: 'POST',
     body: JSON.stringify(friend),
-    headers: {
-      'Content-Type': 'application/json',
-    },
   });
-  const data = await res.json();
+};
 
-  return data;
+export const getFriendIdeas = async (friendId: string) => {
+  return apiCall<FriendsIdea[]>(`/friends/${friendId}/ideas`);
+};
+
+export const getFriendIdeaById = async (id: string) => {
+  return apiCall<FriendsIdea>(`/friend-ideas/${id}`);
+};
+
+export const createFriendIdea = async (newFriendIdea: NewFriendsIdea) => {
+  return apiCall<FriendsIdea>('/friend-ideas', {
+    method: 'POST',
+    body: JSON.stringify(newFriendIdea),
+  });
+};
+
+export const updateFriendIdea = async (id: string, updatedFriendIdea: UpdateFriendsIdea) => {
+  return apiCall<FriendsIdea>(`/friend-ideas/${id}`, {
+    method: 'POST',
+    body: JSON.stringify(updatedFriendIdea),
+  });
 };

@@ -1,26 +1,80 @@
-use diesel::prelude::*;
+use diesel::{pg::Pg, prelude::*, query_builder::Query};
 use log::info;
 use uuid::Uuid;
 
-use crate::{
-    friends::models,
-    schema::{friends, friends_ideas},
-};
+use crate::{friends::models, schema::friends};
 
 use super::models::{Friend, NewFriend, UpdateFriend};
 
 type DbError = Box<dyn std::error::Error + Send + Sync>;
 
-pub fn find_all_friends(conn: &mut PgConnection) -> Result<Vec<Friend>, DbError> {
-    let all_friends = friends::table
-        // .limit(10)
+pub fn find_by_id(conn: &mut PgConnection, id: String) -> Result<Friend, DbError> {
+    let friend = friends::table
+        .filter(friends::id.eq(id))
+        .first(conn)
+        .expect("Error loading friend");
+
+    Ok(friend)
+}
+
+pub fn find_all(
+    conn: &mut PgConnection,
+    sort_by: String,
+    sort_order: String,
+) -> Result<Vec<Friend>, DbError> {
+    let query = friends::table.limit(50);
+
+    match sort_by.as_str() {
+        "first_name" => {
+            if sort_order == "desc" {
+                query.order_by(friends::first_name.desc());
+            } else {
+                query.order_by(friends::first_name.asc());
+            }
+        }
+        "last_name" => {
+            if sort_order == "desc" {
+                query.order_by(friends::last_name.desc());
+            } else {
+                query.order_by(friends::last_name.asc());
+            }
+        }
+        "date_of_birth" => {
+            if sort_order == "desc" {
+                query.order_by(friends::date_of_birth.desc());
+            } else {
+                query.order_by(friends::date_of_birth.asc());
+            }
+        }
+        "birthday" => {
+            // query
+            //     .order_by(friends::date_of_birth.asc())
+            //     .where(diesel::dsl::date_part("month", friends::date_of_birth).eq(diesel::dsl::date_part("month", diesel::dsl::now())))
+        }
+        "met_at" => {
+            if sort_order == "desc" {
+                query.order_by(friends::met_at.desc());
+            } else {
+                query.order_by(friends::met_at.asc());
+            }
+        }
+        _ => {
+            if sort_order == "desc" {
+                query.order_by(friends::created_at.desc());
+            } else {
+                query.order_by(friends::created_at.asc());
+            }
+        }
+    };
+
+    let all_friends = query
         .load::<models::Friend>(conn)
         .expect("Error loading friends");
 
     Ok(all_friends)
 }
 
-pub fn create_friend(conn: &mut PgConnection, new_friend: &NewFriend) -> Result<Friend, DbError> {
+pub fn create(conn: &mut PgConnection, new_friend: &NewFriend) -> Result<Friend, DbError> {
     let friend = Friend {
         id: Uuid::new_v4().to_string(),
         first_name: new_friend.first_name.clone(),
@@ -39,7 +93,7 @@ pub fn create_friend(conn: &mut PgConnection, new_friend: &NewFriend) -> Result<
     Ok(friend)
 }
 
-pub fn update_friend(
+pub fn update(
     conn: &mut PgConnection,
     id: String,
     update_friend: &UpdateFriend,
@@ -56,13 +110,4 @@ pub fn update_friend(
         .get_result(conn)?;
 
     Ok(updated_friend)
-}
-
-pub fn find_friend_by_id(conn: &mut PgConnection, id: String) -> Result<Friend, DbError> {
-    let friend = friends::table
-        .filter(friends::id.eq(id))
-        .first(conn)
-        .expect("Error loading friend");
-
-    Ok(friend)
 }
