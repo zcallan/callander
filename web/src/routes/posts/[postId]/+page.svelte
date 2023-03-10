@@ -30,7 +30,6 @@
 
 <style>
   .wrapper {
-    text-align: center;
     padding: 40px;
   }
 </style>

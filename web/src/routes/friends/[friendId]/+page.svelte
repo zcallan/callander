@@ -7,6 +7,9 @@
   import { getFriendByIdQuery, getFriendIdeasQuery } from '$lib/queries/friends';
   import FriendIdeaForm from '$lib/components/FriendIdeaForm.svelte';
 
+  const CURRENT_YEAR = new Date().getFullYear();
+  const BDAY_RECENT_THRESHOLD = -60;
+
   export let data: PageData;
 
   const friendId: string = data.friendId;
@@ -21,20 +24,29 @@
     {
       label: 'Date of birth',
       value: $friend.data?.date_of_birth,
-      format: (v: any) => v && dayjs(v).format('D MMM YYYY'),
-    },
-    {
-      label: 'Years old',
-      value: $friend.data?.date_of_birth,
       format: (value: any) => {
         if (!value) return null;
         const dateOfBirth = dayjs(value);
-        const currentYear = dayjs().year();
-        const daysUntilBday = dateOfBirth.year(currentYear).isAfter(dayjs())
-          ? dateOfBirth.year(currentYear).diff(dayjs(), 'days')
-          : dateOfBirth.year(currentYear + 1).diff(dayjs(), 'days');
+        const formattedDob = dayjs(value).format('D MMM YYYY');
+        const daysUntilBday = dateOfBirth.year(CURRENT_YEAR).isAfter(dayjs())
+          ? dateOfBirth.year(CURRENT_YEAR).diff(dayjs(), 'days')
+          : dateOfBirth.year(CURRENT_YEAR + 1).diff(dayjs(), 'days');
         const yearsOld = dayjs().diff(dateOfBirth, 'years');
-        return `${yearsOld} (${daysUntilBday}d until bday)`;
+        return `${formattedDob} (${yearsOld})`;
+      },
+    },
+    {
+      label: 'Birthday',
+      value: $friend.data?.date_of_birth,
+      format: (value: any) => {
+        if (!value) return null;
+        const birthday = dayjs(value).set('year', CURRENT_YEAR);
+        let diff = birthday.diff(dayjs(), 'days');
+        if (diff < 0) {
+          if (diff > BDAY_RECENT_THRESHOLD) return `${Math.abs(diff)} days ago`;
+          diff = birthday.add(1, 'year').diff(dayjs(), 'days');
+        }
+        return `${diff} days from now`;
       },
     },
     {
@@ -153,7 +165,6 @@
 
 <style>
   .wrapper {
-    text-align: center;
     padding: 40px;
   }
 

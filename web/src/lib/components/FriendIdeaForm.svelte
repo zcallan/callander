@@ -72,7 +72,6 @@
   form {
     max-width: 200px;
     width: 100%;
-    margin: 0 auto;
   }
 
   button[type='submit'] {
