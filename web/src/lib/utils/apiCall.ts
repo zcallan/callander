@@ -1,7 +1,7 @@
-const API_URL = 'http://localhost:8080';
+import { PUBLIC_API_URL } from '$env/static/public';
 
 async function apiCall<T>(url: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(`${API_URL}${url}`, {
+  const res = await fetch(`${PUBLIC_API_URL}${url}`, {
     headers: {
       'Content-Type': 'application/json',
       ...options?.headers,
