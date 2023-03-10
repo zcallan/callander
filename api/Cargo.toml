@@ -22,3 +22,8 @@ env_logger = "0.10"
 ts-rs = "6.2"
 chrono = { version = "0.4.19", features = ["serde"] }
 log = "0.4"
+
+# Defining bin here to make multi stage docker build work
+[[bin]]
+name = "callander-rust"
+path = "src/main.rs"
