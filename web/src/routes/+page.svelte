@@ -5,8 +5,7 @@
   import type { Friend } from '../../../api/bindings/Friend';
 
   const CURRENT_YEAR = new Date().getFullYear();
-  const BDAY_UPCOMING_THRESHOLD = 60;
-  const BDAY_RECENT_THRESHOLD = -30;
+  const BDAY_THRESHOLD = 60;
 
   // This data is cached by prefetchQuery in +page.ts so no fetch actually happens here
   const friendsQuery = getFriendsQuery({ page: 1, per_page: 10 });
@@ -14,7 +13,6 @@
   const formatBday = (date: string) => {
     const formattedDate = dayjs(date).format('MMM D');
     const daysUntilBday = dayjs(date).set('year', CURRENT_YEAR).diff(dayjs(), 'days');
-    const daysSinceBday = daysUntilBday > 0 ? daysUntilBday - 365 : daysUntilBday + 365;
     return `${formattedDate} (${Math.abs(daysUntilBday)} days ${
       daysUntilBday > 0 ? 'away' : 'ago'
     })`;
@@ -27,12 +25,12 @@
       upcomingBdays = $friendsQuery.data.filter((friend) => {
         const bday = dayjs(friend.date_of_birth).set('year', CURRENT_YEAR);
         const diff = bday.diff(dayjs(), 'days');
-        return diff >= 0 && diff <= BDAY_UPCOMING_THRESHOLD;
+        return diff >= 0 && diff <= BDAY_THRESHOLD;
       });
       recentBdays = $friendsQuery.data.filter((friend) => {
         const bday = dayjs(friend.date_of_birth).set('year', CURRENT_YEAR);
         const diff = bday.diff(dayjs(), 'days');
-        return diff < 0 && diff > BDAY_RECENT_THRESHOLD;
+        return diff < 0 && diff > -BDAY_THRESHOLD;
       });
     }
   }
