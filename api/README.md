@@ -6,6 +6,13 @@
 $ cargo run
 ```
 
+Or for watching:
+
+```bash
+$ cargo install cargo-watch
+$ cargo watch -q -c -w src/ -x run
+```
+
 ## Migrations
 
 ```bash

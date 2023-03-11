@@ -6,10 +6,15 @@ async function apiCall<T>(url: string, options?: RequestInit): Promise<T> {
       'Content-Type': 'application/json',
       ...options?.headers,
     },
+    credentials: 'include',
     ...options,
   });
 
   const data = await res.json();
+
+  if (res.status >= 400) {
+    throw new Error(data?.message || 'Something went wrong');
+  }
 
   return data;
 }
