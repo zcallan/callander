@@ -14,7 +14,7 @@ mod utils;
 use actix_web::{http, middleware::Logger, App, HttpServer};
 use config::cors::with_cors;
 use log::info;
-use modules::{friends, friends_events, friends_ideas, posts, users};
+use modules::{friends, friends_events, friends_ideas, posts};
 use utils::env::{get_host_port, init_env};
 
 #[actix_web::main]
@@ -34,7 +34,6 @@ async fn main() -> std::io::Result<()> {
             .configure(friends_events::routes::init_routes)
             .configure(friends_ideas::routes::init_routes)
             .configure(posts::routes::init_routes)
-            .configure(users::routes::init_routes)
     })
     .bind((host, port))?
     .run();

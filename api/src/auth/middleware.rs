@@ -39,6 +39,7 @@ impl FromRequest for JwtMiddleware {
 
         Box::pin(async move {
             let api_url = env::var("HANKO_API_URL").expect("Hanko API url not set");
+            // Cache this for faster response times?
             let url = api_url.to_owned() + "/.well-known/jwks.json";
 
             let token = req

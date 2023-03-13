@@ -69,15 +69,6 @@ diesel::table! {
     }
 }
 
-diesel::table! {
-    users (id) {
-        id -> Varchar,
-        first_name -> Varchar,
-        last_name -> Varchar,
-        date_of_birth -> Nullable<Date>,
-    }
-}
-
 diesel::joinable!(friends_events -> friends (friend_id));
 diesel::joinable!(friends_ideas -> friends (friend_id));
 
@@ -86,5 +77,4 @@ diesel::allow_tables_to_appear_in_same_query!(
     friends_events,
     friends_ideas,
     posts,
-    users,
 );
