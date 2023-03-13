@@ -1,5 +1,5 @@
 import { getPosts } from '$lib/api/posts';
-import type { PostsFindAllQuery } from '../../../../api/bindings/PostsFindAllQuery';
+import type { PostsFindAllQuery } from '$lib/types/generated';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ parent }) => {
