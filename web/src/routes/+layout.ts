@@ -1,6 +1,6 @@
-import { browser } from '$app/environment'
-import { QueryClient } from '@tanstack/svelte-query'
-import type { LayoutLoad } from './$types'
+import { browser } from '$app/environment';
+import { QueryClient } from '@tanstack/svelte-query';
+import type { LayoutLoad } from './$types';
 
 export const load: LayoutLoad = async () => {
   const queryClient = new QueryClient({
@@ -9,7 +9,7 @@ export const load: LayoutLoad = async () => {
         enabled: browser,
       },
     },
-  })
+  });
 
-  return { queryClient }
-}
+  return { queryClient };
+};
