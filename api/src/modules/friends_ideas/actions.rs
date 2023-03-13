@@ -8,7 +8,11 @@ use super::models::{FriendsIdea, NewFriendsIdea, UpdateFriendsIdea};
 
 type DbError = Box<dyn std::error::Error + Send + Sync>;
 
-pub fn find_by_id(conn: &mut PgConnection, idea_id: String) -> Result<FriendsIdea, DbError> {
+pub fn find_by_id(
+    conn: &mut PgConnection,
+    user_id: String,
+    idea_id: String,
+) -> Result<FriendsIdea, DbError> {
     let friend = friends_ideas::table
         .filter(friends_ideas::id.eq(idea_id))
         .first(conn)
@@ -17,10 +21,15 @@ pub fn find_by_id(conn: &mut PgConnection, idea_id: String) -> Result<FriendsIde
     Ok(friend)
 }
 
-pub fn find_all(conn: &mut PgConnection, friend_id: String) -> Result<Vec<FriendsIdea>, DbError> {
+pub fn find_all(
+    conn: &mut PgConnection,
+    user_id: String,
+    friend_id: String,
+) -> Result<Vec<FriendsIdea>, DbError> {
     let all_friend_ideas = friends_ideas::table
         // .limit(10)
         .filter(friends_ideas::friend_id.eq(friend_id))
+        .filter(friends_ideas::user_id.eq(user_id))
         .load::<FriendsIdea>(conn)
         .expect("Error loading friend ideas");
 
@@ -29,6 +38,7 @@ pub fn find_all(conn: &mut PgConnection, friend_id: String) -> Result<Vec<Friend
 
 pub fn create(
     conn: &mut PgConnection,
+    user_id: String,
     new_friend_idea: &NewFriendsIdea,
 ) -> Result<FriendsIdea, DbError> {
     let friends_idea = FriendsIdea {
@@ -38,6 +48,7 @@ pub fn create(
         updated_at: chrono::Utc::now().naive_utc(),
         friend_id: new_friend_idea.friend_id.clone(),
         idea_type: new_friend_idea.idea_type.clone(),
+        user_id: user_id.clone(),
     };
 
     diesel::insert_into(friends_ideas::table)
@@ -49,6 +60,7 @@ pub fn create(
 
 pub fn update(
     conn: &mut PgConnection,
+    user_id: String,
     idea_id: String,
     update_friend_idea: &UpdateFriendsIdea,
 ) -> Result<FriendsIdea, DbError> {

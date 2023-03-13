@@ -12,17 +12,24 @@ use super::utils::sort_by_column;
 
 type DbError = Box<dyn std::error::Error + Send + Sync>;
 
-pub fn find_by_id(conn: &mut PgConnection, _id: String) -> Result<Friend, DbError> {
+pub fn find_by_id(conn: &mut PgConnection, user_id: String, id: String) -> Result<Friend, DbError> {
     let friend = friends::table
-        .filter(friends::id.eq(_id))
+        .filter(friends::user_id.eq(user_id))
+        .filter(friends::id.eq(id))
         .first(conn)
         .expect("Error loading friend");
 
     Ok(friend)
 }
 
-pub fn find_all(conn: &mut PgConnection, sort: FriendsFindAllSort) -> Result<Vec<Friend>, DbError> {
-    let mut query = friends::table.into_boxed();
+pub fn find_all(
+    conn: &mut PgConnection,
+    user_id: String,
+    sort: FriendsFindAllSort,
+) -> Result<Vec<Friend>, DbError> {
+    let mut query = friends::table
+        .filter(friends::user_id.eq(user_id))
+        .into_boxed();
 
     query = match sort.sort_by.as_ref() {
         "first_name" => sort_by_column(query, friends::first_name, sort.sort_dir),
@@ -37,7 +44,11 @@ pub fn find_all(conn: &mut PgConnection, sort: FriendsFindAllSort) -> Result<Vec
     Ok(all_friends)
 }
 
-pub fn create(conn: &mut PgConnection, new_friend: &NewFriend) -> Result<Friend, DbError> {
+pub fn create(
+    conn: &mut PgConnection,
+    user_id: String,
+    new_friend: &NewFriend,
+) -> Result<Friend, DbError> {
     let friend = Friend {
         id: Uuid::new_v4().to_string(),
         first_name: new_friend.first_name.clone(),
@@ -47,6 +58,7 @@ pub fn create(conn: &mut PgConnection, new_friend: &NewFriend) -> Result<Friend,
         updated_at: chrono::Utc::now().naive_utc(),
         met_at: new_friend.met_at.clone(),
         met_at_accuracy: new_friend.met_at_accuracy.clone(),
+        user_id: user_id.clone(),
     };
 
     diesel::insert_into(friends::table)
@@ -58,6 +70,7 @@ pub fn create(conn: &mut PgConnection, new_friend: &NewFriend) -> Result<Friend,
 
 pub fn update(
     conn: &mut PgConnection,
+    user_id: String,
     id: String,
     update_friend: &UpdateFriend,
 ) -> Result<Friend, DbError> {
@@ -69,7 +82,8 @@ pub fn update(
             friends::met_at.eq(update_friend.met_at.clone()),
             friends::met_at_accuracy.eq(update_friend.met_at_accuracy.clone()),
         ))
-        .filter(friends::id.eq(id.clone()))
+        .filter(friends::id.eq(id))
+        .filter(friends::user_id.eq(user_id))
         .get_result(conn)?;
 
     Ok(updated_friend)

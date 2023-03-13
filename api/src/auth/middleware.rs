@@ -27,7 +27,7 @@ impl fmt::Display for ErrorResponse {
 }
 
 pub struct JwtMiddleware {
-    pub user_id: uuid::Uuid,
+    pub user_id: String,
 }
 
 impl FromRequest for JwtMiddleware {
@@ -61,9 +61,7 @@ impl FromRequest for JwtMiddleware {
 
             match key_set.verify(&token) {
                 Ok(jwt) => {
-                    let sub = jwt.payload().get_str("sub").unwrap();
-                    let user_id = Uuid::try_from(sub).unwrap();
-
+                    let user_id = jwt.payload().get_str("sub").unwrap().to_string();
                     return Ok(JwtMiddleware { user_id });
                 }
                 Err(Error { msg, typ: _ }) => {

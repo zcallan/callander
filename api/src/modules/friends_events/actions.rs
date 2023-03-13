@@ -8,19 +8,29 @@ use super::models::{FriendsEvent, NewFriendsEvent, UpdateFriendsEvent};
 
 type DbError = Box<dyn std::error::Error + Send + Sync>;
 
-pub fn find_by_id(conn: &mut PgConnection, event_id: String) -> Result<FriendsEvent, DbError> {
+pub fn find_by_id(
+    conn: &mut PgConnection,
+    user_id: String,
+    event_id: String,
+) -> Result<FriendsEvent, DbError> {
     let friend = friends_events::table
         .filter(friends_events::id.eq(event_id))
+        .filter(friends_events::user_id.eq(user_id))
         .first(conn)
         .expect("Error loading friend event");
 
     Ok(friend)
 }
 
-pub fn find_all(conn: &mut PgConnection, friend_id: String) -> Result<Vec<FriendsEvent>, DbError> {
+pub fn find_all(
+    conn: &mut PgConnection,
+    user_id: String,
+    friend_id: String,
+) -> Result<Vec<FriendsEvent>, DbError> {
     let all_friend_events = friends_events::table
         // .limit(10)
         .filter(friends_events::friend_id.eq(friend_id))
+        .filter(friends_events::user_id.eq(user_id))
         .load::<FriendsEvent>(conn)
         .expect("Error loading friend events");
 
@@ -29,6 +39,7 @@ pub fn find_all(conn: &mut PgConnection, friend_id: String) -> Result<Vec<Friend
 
 pub fn create(
     conn: &mut PgConnection,
+    user_id: String,
     new_friend_event: &NewFriendsEvent,
 ) -> Result<FriendsEvent, DbError> {
     let friends_event = FriendsEvent {
@@ -38,6 +49,7 @@ pub fn create(
         updated_at: chrono::Utc::now().naive_utc(),
         friend_id: new_friend_event.friend_id.clone(),
         event_type: new_friend_event.event_type.clone(),
+        user_id: user_id.clone(),
     };
 
     diesel::insert_into(friends_events::table)
@@ -49,6 +61,7 @@ pub fn create(
 
 pub fn update(
     conn: &mut PgConnection,
+    user_id: String,
     event_id: String,
     update_friend_event: &UpdateFriendsEvent,
 ) -> Result<FriendsEvent, DbError> {
@@ -57,7 +70,8 @@ pub fn update(
             friends_events::content.eq(update_friend_event.content.clone()),
             friends_events::event_type.eq(update_friend_event.event_type.clone()),
         ))
-        .filter(friends_events::friend_id.eq(event_id.clone()))
+        .filter(friends_events::id.eq(event_id))
+        .filter(friends_events::user_id.eq(user_id))
         .get_result(conn)?;
 
     Ok(updated_friend_event)

@@ -30,6 +30,8 @@ pub struct FriendsIdea {
 
     pub friend_id: String,
     pub idea_type: FriendIdeaTypeEnum,
+
+    pub user_id: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, TS)]

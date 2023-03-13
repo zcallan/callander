@@ -1,0 +1,5 @@
+-- Your SQL goes here
+ALTER TABLE friends ADD COLUMN user_id VARCHAR NOT NULL;
+ALTER TABLE friends_ideas ADD COLUMN user_id VARCHAR NOT NULL;
+ALTER TABLE friends_events ADD COLUMN user_id VARCHAR NOT NULL;
+ALTER TABLE posts ADD COLUMN user_id VARCHAR NOT NULL;

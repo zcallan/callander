@@ -34,6 +34,8 @@ pub struct Friend {
     #[ts(type = "string")]
     pub met_at: Option<NaiveDate>,
     pub met_at_accuracy: Option<MetAtAccuracyEnum>,
+
+    pub user_id: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, TS)]

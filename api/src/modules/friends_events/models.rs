@@ -30,6 +30,7 @@ pub struct FriendsEvent {
 
     pub friend_id: String,
     pub event_type: FriendEventTypeEnum,
+    pub user_id: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, TS)]

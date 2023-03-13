@@ -27,6 +27,7 @@ diesel::table! {
         updated_at -> Timestamp,
         met_at -> Nullable<Date>,
         met_at_accuracy -> Nullable<MetAtAccuracyEnum>,
+        user_id -> Varchar,
     }
 }
 
@@ -41,6 +42,7 @@ diesel::table! {
         updated_at -> Timestamp,
         friend_id -> Varchar,
         event_type -> FriendsEventsTypeEnum,
+        user_id -> Varchar,
     }
 }
 
@@ -55,6 +57,7 @@ diesel::table! {
         updated_at -> Timestamp,
         friend_id -> Varchar,
         idea_type -> FriendsIdeasTypeEnum,
+        user_id -> Varchar,
     }
 }
 
@@ -66,6 +69,7 @@ diesel::table! {
         for_date -> Date,
         created_at -> Timestamp,
         updated_at -> Timestamp,
+        user_id -> Varchar,
     }
 }
 

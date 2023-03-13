@@ -19,6 +19,8 @@ pub struct Post {
 
     #[ts(type = "string")]
     pub updated_at: NaiveDateTime,
+
+    pub user_id: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TS)]
