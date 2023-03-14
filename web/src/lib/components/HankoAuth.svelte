@@ -4,12 +4,13 @@
   import { onDestroy, onMount } from 'svelte';
   import { register } from '@teamhanko/hanko-elements';
   import { goto } from '$app/navigation';
+  import { isAuthenticated } from '$lib/stores';
 
   let element: HTMLElement;
 
   const redirectAfterLogin = () => {
     // successfully logged in, redirect to a page in your application
-    goto('/');
+    isAuthenticated.set(true);
   };
 
   onMount(async () => {
