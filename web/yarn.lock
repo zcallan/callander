@@ -168,6 +168,11 @@
   resolved "https://registry.npmjs.org/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
+"@iarna/toml@^2.2.5":
+  version "2.2.5"
+  resolved "https://registry.yarnpkg.com/@iarna/toml/-/toml-2.2.5.tgz#b32366c89b43c6f8cefbdefac778b9c828e3ba8c"
+  integrity sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==
+
 "@jridgewell/resolve-uri@3.1.0":
   version "3.1.0"
   resolved "https://registry.npmjs.org/@jridgewell/resolve-uri/-/resolve-uri-3.1.0.tgz"
@@ -264,9 +269,18 @@
   dependencies:
     import-meta-resolve "^2.2.0"
 
+"@sveltejs/adapter-cloudflare-workers@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@sveltejs/adapter-cloudflare-workers/-/adapter-cloudflare-workers-1.1.0.tgz#d060ce721777a55ccc8b9cd8dfa179b6d95e7370"
+  integrity sha512-rRvvUJv0FkA29YPcAmhH5khik8orLnw7m+g+Ge9OR5yTP1BTwec6pYhhIjARmV2O+aOs34ZV+yEzawoQNh4fUw==
+  dependencies:
+    "@cloudflare/workers-types" "^4.20221111.1"
+    "@iarna/toml" "^2.2.5"
+    esbuild "^0.16.3"
+
 "@sveltejs/adapter-cloudflare@^2.2.0":
   version "2.2.0"
-  resolved "https://registry.npmjs.org/@sveltejs/adapter-cloudflare/-/adapter-cloudflare-2.2.0.tgz"
+  resolved "https://registry.yarnpkg.com/@sveltejs/adapter-cloudflare/-/adapter-cloudflare-2.2.0.tgz#6d99235cc7312b0f79669ca84eee6052753aa00d"
   integrity sha512-B3GQtdPBLHG1eTjOUCjTOqlkTEuYbeSFFw984sEclWxNnLgj3dO6DY8pRTVyrltwNtKRG/7W+ltPVzcbcn30Dg==
   dependencies:
     "@cloudflare/workers-types" "^4.20221111.1"
