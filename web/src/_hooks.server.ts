@@ -6,6 +6,8 @@ export const handle = (async ({ event, resolve }) => {
   const isLoggedIn = !!cookies.hanko;
   const isLoginPage = event.url.pathname.startsWith('/login');
 
+  console.log(cookies);
+
   if (!isLoggedIn && !isLoginPage) {
     throw redirect(307, '/login');
   }
