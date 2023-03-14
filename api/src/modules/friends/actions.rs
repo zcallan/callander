@@ -75,6 +75,8 @@ pub fn update(
     update_friend: &UpdateFriend,
 ) -> Result<Friend, DbError> {
     let updated_friend = diesel::update(friends::table)
+        .filter(friends::id.eq(id))
+        .filter(friends::user_id.eq(user_id))
         .set((
             friends::first_name.eq(update_friend.first_name.clone()),
             friends::last_name.eq(update_friend.last_name.clone()),
@@ -82,8 +84,6 @@ pub fn update(
             friends::met_at.eq(update_friend.met_at.clone()),
             friends::met_at_accuracy.eq(update_friend.met_at_accuracy.clone()),
         ))
-        .filter(friends::id.eq(id))
-        .filter(friends::user_id.eq(user_id))
         .get_result(conn)?;
 
     Ok(updated_friend)

@@ -21,7 +21,7 @@ diesel::table! {
     friends (id) {
         id -> Varchar,
         first_name -> Varchar,
-        last_name -> Varchar,
+        last_name -> Nullable<Varchar>,
         date_of_birth -> Nullable<Date>,
         created_at -> Timestamp,
         updated_at -> Timestamp,

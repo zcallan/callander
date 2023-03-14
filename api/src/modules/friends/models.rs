@@ -20,7 +20,7 @@ pub enum MetAtAccuracyEnum {
 pub struct Friend {
     pub id: String,
     pub first_name: String,
-    pub last_name: String,
+    pub last_name: Option<String>,
 
     #[ts(type = "string")]
     pub date_of_birth: Option<NaiveDate>,
@@ -42,7 +42,7 @@ pub struct Friend {
 #[ts(export)]
 pub struct NewFriend {
     pub first_name: String,
-    pub last_name: String,
+    pub last_name: Option<String>,
 
     #[ts(type = "string")]
     pub date_of_birth: Option<NaiveDate>,
@@ -56,7 +56,7 @@ pub struct NewFriend {
 #[ts(export)]
 pub struct UpdateFriend {
     pub first_name: String,
-    pub last_name: String,
+    pub last_name: Option<String>,
 
     #[ts(type = "string")]
     pub date_of_birth: Option<NaiveDate>,

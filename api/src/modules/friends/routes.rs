@@ -16,8 +16,6 @@ use crate::{db, modules::friends_ideas};
 pub async fn find_all(req: HttpRequest, jwt: JwtMiddleware) -> Result<HttpResponse, Error> {
     let user_id = jwt.user_id;
 
-    info!("User ID: {:?}", user_id);
-
     let params = Query::<HashMap<String, String>>::from_query(req.query_string()).unwrap();
 
     let default_sort_by = &String::from("created_at");
