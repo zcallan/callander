@@ -25,6 +25,7 @@ log = "0.4"
 futures-util = "0.3.26"
 jwksclient2 = "0.2.0"
 async-trait = "0.1.66"
+jsonwebtoken = "8"
 
 # Defining bin here to make multi stage docker build work
 [[bin]]

@@ -16,8 +16,7 @@ pub fn find_by_id(conn: &mut PgConnection, user_id: String, id: String) -> Resul
     let friend = friends::table
         .filter(friends::user_id.eq(user_id))
         .filter(friends::id.eq(id))
-        .first(conn)
-        .expect("Error loading friend");
+        .first(conn)?;
 
     Ok(friend)
 }
