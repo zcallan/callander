@@ -2,3 +2,4 @@
 ._target
 Cargo.lock
 .env
+http-cacache

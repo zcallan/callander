@@ -1,19 +1,17 @@
 use core::fmt;
 use jsonwebtoken::jwk::AlgorithmParameters;
 use jsonwebtoken::{decode, decode_header, jwk, DecodingKey, Validation};
-use jsonwebtoken::{encode, Algorithm, EncodingKey, Header};
+use reqwest::Client;
+use reqwest_middleware::ClientWithMiddleware;
 use std::collections::HashMap;
 use std::env;
-use std::future::{ready, Ready};
 use std::pin::Pin;
-use uuid::Uuid;
 
 use actix_web::error::ErrorUnauthorized;
-use actix_web::web::BytesMut;
+use actix_web::web::Data;
 use actix_web::{dev::Payload, Error as ActixWebError};
-use actix_web::{http, web, FromRequest, HttpMessage, HttpRequest};
+use actix_web::{http, FromRequest, HttpRequest};
 use futures::Future;
-use log::info;
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
@@ -41,10 +39,14 @@ impl FromRequest for JwtMiddleware {
 
         Box::pin(async move {
             let api_url = env::var("HANKO_API_URL").expect("Hanko API url not set");
-            // Cache this for faster response times?
             let url = api_url.to_owned() + "/.well-known/jwks.json";
 
-            let api_response = reqwest::get(url)
+            let client = req.app_data::<Data<ClientWithMiddleware>>().expect("Wtf");
+
+            // TODO: Cleaner approach to error handling
+            let api_response = client
+                .get(url)
+                .send()
                 .await
                 .expect("Error fetching jwks")
                 .text()
@@ -117,7 +119,6 @@ impl FromRequest for JwtMiddleware {
                         return Ok(JwtMiddleware {
                             user_id: user_id.to_string(),
                         });
-                        // println!("Token: {:?}", decoded_token);
                     }
                     _ => unreachable!("this should be a RSA"),
                 }
@@ -128,34 +129,6 @@ impl FromRequest for JwtMiddleware {
                 };
                 return Err(ErrorUnauthorized(json_error));
             }
-
-            Ok(JwtMiddleware {
-                user_id: "123".to_string(),
-            })
-
-            // let token = decode::<Claims>(
-            //     &token,
-            //     &DecodingKey::from_rsa_components(jwk["n"], jwk["e"]),
-            //     &Validation::new(Algorithm::RS256),
-            // )?;
-
-            // let key_set = KeyStore::new_from(url.to_string()).await.unwrap();
-            // let token = token.unwrap();
-
-            // match key_set.verify(&token) {
-            //     Ok(jwt) => {
-            //         let user_id = jwt.payload().get_str("sub").unwrap().to_string();
-            //         return Ok(JwtMiddleware { user_id });
-            //     }
-            //     Err(Error { msg, typ: _ }) => {
-            //         eprintln!("Could not verify token. Reason: {}", msg);
-            //         let json_error = ErrorResponse {
-            //             status: "fail".to_string(),
-            //             message: "You are not logged in, please provide token".to_string(),
-            //         };
-            //         return Err(ErrorUnauthorized(json_error));
-            //     }
-            // }
         })
     }
 }
