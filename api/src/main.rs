@@ -11,7 +11,7 @@ mod modules;
 mod schema;
 mod utils;
 
-use actix_web::{http, middleware::Logger, App, HttpServer};
+use actix_web::{http, middleware::Logger, web, App, HttpServer};
 use config::cors::with_cors;
 use log::info;
 use modules::{friends, friends_events, friends_ideas, posts};

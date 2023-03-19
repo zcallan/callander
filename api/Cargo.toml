@@ -26,6 +26,9 @@ futures-util = "0.3.26"
 jwksclient2 = "0.2.0"
 async-trait = "0.1.66"
 jsonwebtoken = "8"
+jwks_client_rs = "0.4.0"
+reqwest = { version = "0.11", features = ["json"] }
+tokio = { version = "1", features = ["full"] }
 
 # Defining bin here to make multi stage docker build work
 [[bin]]

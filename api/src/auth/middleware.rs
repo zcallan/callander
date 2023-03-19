@@ -13,8 +13,6 @@ use actix_web::web::BytesMut;
 use actix_web::{dev::Payload, Error as ActixWebError};
 use actix_web::{http, web, FromRequest, HttpMessage, HttpRequest};
 use futures::Future;
-use jwksclient2::error::Error;
-use jwksclient2::keyset::KeyStore;
 use log::info;
 use serde::Serialize;
 
@@ -46,9 +44,12 @@ impl FromRequest for JwtMiddleware {
             // Cache this for faster response times?
             let url = api_url.to_owned() + "/.well-known/jwks.json";
 
-            const JWKS_REPLY: &str = r#"
-                [REDACTED]
-            "#;
+            let api_response = reqwest::get(url)
+                .await
+                .expect("Error fetching jwks")
+                .text()
+                .await
+                .expect("Error parsing jwks");
 
             let token = req
                 .headers()
@@ -88,7 +89,7 @@ impl FromRequest for JwtMiddleware {
                 }
             };
 
-            let jwks: jwk::JwkSet = match serde_json::from_str(JWKS_REPLY) {
+            let jwks: jwk::JwkSet = match serde_json::from_str(&api_response) {
                 Ok(j) => j,
                 Err(_) => {
                     let json_error = ErrorResponse {
