@@ -125,16 +125,16 @@
 </form>
 
 <style>
-  :global(.input) {
-    margin-bottom: 16px;
-  }
-
   form {
     max-width: 200px;
     width: 100%;
   }
 
-  button[type='submit'] {
+  form :global(.input) {
+    margin-bottom: 16px;
+  }
+
+  form button[type='submit'] {
     width: 100%;
   }
 </style>

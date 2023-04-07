@@ -48,19 +48,6 @@
 </section>
 
 <style>
-  :global(.input) {
-    margin-bottom: 16px;
-  }
-
-  form {
-    max-width: 200px;
-    width: 100%;
-  }
-
-  button[type='submit'] {
-    width: 100%;
-  }
-
   section {
     padding: 40px;
   }

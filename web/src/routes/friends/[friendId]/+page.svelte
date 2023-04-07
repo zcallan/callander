@@ -27,10 +27,7 @@
       format: (value: any) => {
         if (!value) return null;
         const dateOfBirth = dayjs(value);
-        const formattedDob = dayjs(value).format('D MMM YYYY');
-        const daysUntilBday = dateOfBirth.year(CURRENT_YEAR).isAfter(dayjs())
-          ? dateOfBirth.year(CURRENT_YEAR).diff(dayjs(), 'days')
-          : dateOfBirth.year(CURRENT_YEAR + 1).diff(dayjs(), 'days');
+        const formattedDob = dateOfBirth.format('D MMM YYYY');
         const yearsOld = dayjs().diff(dateOfBirth, 'years');
         return `${formattedDob} (${yearsOld})`;
       },
@@ -71,8 +68,6 @@
     },
     {}
   );
-
-  console.log(friendIdeaGroups);
 
   const handleAddedFriendIdea = () => {
     isShowingFriendIdeaForm = false;

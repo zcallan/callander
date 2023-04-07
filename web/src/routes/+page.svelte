@@ -1,37 +1,34 @@
 <script lang="ts">
-  import { getPostsQuery } from '$lib/queries/posts';
-  import { getFriendsQuery } from '$lib/queries/friends';
-  import dayjs from 'dayjs';
   import type { Friend } from '../../../api/bindings/Friend';
+  import dayjs from 'dayjs';
+  import { getFriendsQuery } from '$lib/queries/friends';
+  import formatBirthdayString from '$lib/utils/formatBirthdayString';
 
   const CURRENT_YEAR = new Date().getFullYear();
-  const BDAY_THRESHOLD = 60;
+  const BDAY_THRESHOLD_DAYS = 60;
 
-  // This data is cached by prefetchQuery in +page.ts so no fetch actually happens here
   const friendsQuery = getFriendsQuery({ page: 1, per_page: 10 });
-
-  const formatBday = (date: string) => {
-    const formattedDate = dayjs(date).format('MMM D');
-    const daysUntilBday = dayjs(date).set('year', CURRENT_YEAR).diff(dayjs(), 'days');
-    return `${formattedDate} (${Math.abs(daysUntilBday)} days ${
-      daysUntilBday > 0 ? 'away' : 'ago'
-    })`;
-  };
 
   let upcomingBdays: Friend[] = [];
   let recentBdays: Friend[] = [];
   $: {
     if ($friendsQuery.isSuccess) {
-      upcomingBdays = $friendsQuery.data.filter((friend) => {
+      let _upcomingBdays: Friend[] = [];
+      let _recentBdays: Friend[] = [];
+
+      $friendsQuery.data.forEach((friend) => {
         const bday = dayjs(friend.date_of_birth).set('year', CURRENT_YEAR);
         const diff = bday.diff(dayjs(), 'days');
-        return diff >= 0 && diff <= BDAY_THRESHOLD;
+
+        if (diff >= 0 && diff <= BDAY_THRESHOLD_DAYS) {
+          _upcomingBdays.push(friend);
+        } else if (diff < 0 && diff > -BDAY_THRESHOLD_DAYS) {
+          _recentBdays.push(friend);
+        }
       });
-      recentBdays = $friendsQuery.data.filter((friend) => {
-        const bday = dayjs(friend.date_of_birth).set('year', CURRENT_YEAR);
-        const diff = bday.diff(dayjs(), 'days');
-        return diff < 0 && diff > -BDAY_THRESHOLD;
-      });
+
+      upcomingBdays = _upcomingBdays;
+      recentBdays = _recentBdays;
     }
   }
 </script>
@@ -63,7 +60,7 @@
         <a href="/friends/{friend.id}">
           {friend.first_name}
           {friend.last_name}
-          - {formatBday(friend.date_of_birth)}
+          - {formatBirthdayString(friend.date_of_birth)}
         </a>
       {/each}
       <br />
@@ -75,7 +72,7 @@
         <a href="/friends/{friend.id}">
           {friend.first_name}
           {friend.last_name}
-          - {formatBday(friend.date_of_birth)}
+          - {formatBirthdayString(friend.date_of_birth)}
         </a>
       {/each}
       <br />
@@ -91,10 +88,6 @@
 </section>
 
 <style>
-  label {
-    display: block;
-  }
-
   a {
     display: block;
     padding: 5px 0;
